@@ -71,7 +71,7 @@ function BackgroundMarquee() {
         gradient={false}
         className="text-6xl md:text-8xl font-black text-white/15 select-none"
       >
-        <span className="mx-8">LAUNCH</span>
+        <span className="mx-8">MEME</span>
         <img 
           src="coin.gif" 
           alt="coin" 
@@ -83,13 +83,13 @@ function BackgroundMarquee() {
           alt="coin" 
           className="mx-6 w-12 h-12 md:w-24 md:h-24 inline-block opacity-15"
         />
-        <span className="mx-8">PRINT</span>
+        <span className="mx-8">COLLECT</span>
         <img 
           src="coin.gif" 
           alt="coin" 
           className="mx-6 w-12 h-12 md:w-24 md:h-24 inline-block opacity-15"
         />
-        <span className="mx-8">LAUNCH</span>
+        <span className="mx-8">MEME</span>
         <img 
           src="coin.gif" 
           alt="coin" 
@@ -101,7 +101,7 @@ function BackgroundMarquee() {
           alt="coin" 
           className="mx-6 w-12 h-12 md:w-24 md:h-24 inline-block opacity-15"
         />
-        <span className="mx-8">PRINT</span>
+        <span className="mx-8">COLLECT</span>
         <img 
           src="coin.gif" 
           alt="coin" 
@@ -114,10 +114,10 @@ function BackgroundMarquee() {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#15161B] py-12 px-4">
+    <div className="min-h-screen bg-[#000] py-12 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="absolute top-0 left-[9%]">
-          <img src="/print.png" className='w-[75px] h-auto' />
+        <div className="absolute top-5 left-[9%]">
+          <img src="/print.png" className='w-[50px] h-auto' />
         </div>
 
         <div className='absolute top-4 -translate-x-1/2 left-1/2 hidden'>
@@ -134,7 +134,7 @@ export default function Home() {
         <div className='absolute top-5 right-[9%]'>
           <div className='flex justify-center items-center gap-2'>
             <Link
-              href="https://x.com/printedwtf"
+              href="https://x.com"
               className="py-2 text-white mb-[9px] rounded-lg text-base font-medium"
             >
               𝕏
@@ -144,12 +144,6 @@ export default function Home() {
               className="pr-2 pl-1 py-2 text-white mb-2 rounded-lg text-sm font-medium"
             >
               FAQs
-            </Link>
-            <Link
-              href="/claim"
-              className="px-4 py-2 text-gray-900 mb-2 bg-[#67D682] rounded-lg text-sm"
-            >
-              claim
             </Link>
           </div>
         </div>
@@ -161,7 +155,7 @@ export default function Home() {
             {/* Background Marquee */}
             <BackgroundMarquee />
             
-            <div className='w-full md:w-[50%] bg-[#15161B] relative z-20 lg:[mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] lg:[webkit-mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)]'> 
+            <div className='w-full md:w-[50%] bg-[#000] relative z-20 lg:[mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)] lg:[webkit-mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)]'> 
               <div className="relative z-20">
                 <div className='w-full flex justify-center mb-1'> 
                   <motion.div 
@@ -176,13 +170,13 @@ export default function Home() {
                   </motion.div> 
                 </div> 
                 <div className='text-center text-4xl md:text-6xl text-balance font-bold text-white mb-2 whitespace-nowrap'> 
-                  Launch for your 
+                  All Roads Lead 
                 </div> 
-                <div className='text-center text-4xl md:text-6xl text-balance font-bold text-white mb-2 -translate-x-[1.75%] md:-translate-x-[9.75%]'> 
-                  favorite <AnimatedWord /> 
+                <div className='text-center text-4xl md:text-6xl text-balance font-bold text-white mb-2'> 
+                  to Meme 
                 </div> 
                 <div className='text-center text-sm md:text-base text-balance text-gray-300 mb-4 mx-[20%]'> 
-                  they get the fees, it&apos;s time they printed 
+                  100% of value stays in the ecosystem 
                 </div> 
               </div>
             </div>

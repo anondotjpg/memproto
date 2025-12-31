@@ -345,10 +345,10 @@ export async function POST(request) {
     metadataFormData.append('name', tokenData.name);
     metadataFormData.append('symbol', tokenData.symbol);
     metadataFormData.append('description', tokenData.description);
-    metadataFormData.append('twitter', metadataTwitterUrl || '');
+    metadataFormData.append('twitter', tokenData.twitter);
     metadataFormData.append('telegram', tokenData.telegram);
     // Use custom token link instead of user's website for metadata
-    metadataFormData.append('website', `https://printed.wtf/${mintKeypair.publicKey.toString()}`);
+    metadataFormData.append('website', tokenData.website);
     metadataFormData.append('showName', 'true');
     
     if (tokenData.image && tokenData.image.size > 0) {

@@ -14,15 +14,8 @@ export async function GET(request) {
     const limit = parseInt(searchParams.get('limit') || '20');
     const status = searchParams.get('status');
     const search = searchParams.get('search');
-    const feeAccount = searchParams.get('fee_account'); // Filter by X username
     
     const offset = (page - 1) * limit;
-
-    // Define blocked fee accounts (both with and without @ symbol)
-    const blockedAccounts = [
-      'Sol_memories', '@Sol_memories',
-      'fakelove26790', '@fakelove26790'
-    ];
 
     // Build query
     let query = supabase
@@ -30,18 +23,7 @@ export async function GET(request) {
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false });
 
-    // Exclude blocked fee accounts
-    // Use NOT IN with case-insensitive matching
-    blockedAccounts.forEach(blocked => {
-      query = query.not('fee_account', 'ilike', blocked);
-    });
-
-    // Add fee_account filter for logged-in user (case-insensitive)
-    if (feeAccount) {
-      query = query.ilike('fee_account', feeAccount);
-    }
-
-    // Add other filters
+    // Add filters
     if (status && status !== 'all') {
       query = query.eq('status', status);
     }

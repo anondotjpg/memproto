@@ -15,7 +15,7 @@ const PumpTokenCreator = () => {
     twitter: '',
     telegram: '',
     website: '',
-    directFeesTo: ''
+    discord: ''
   });
   
   const [loading, setLoading] = useState(false);
@@ -62,7 +62,7 @@ const PumpTokenCreator = () => {
     if (rateLimitError) {
       const timer = setTimeout(() => {
         setRateLimitError(null);
-      }, 15000); // 15 seconds for fee account errors (longer because they're more serious)
+      }, 15000);
       
       return () => clearTimeout(timer);
     }
@@ -78,39 +78,33 @@ const PumpTokenCreator = () => {
   };
 
   const simulateProgress = () => {
-    // Simulate wallet creation
     setCurrentStep(0);
     updateStepStatus('wallet', 'loading');
     
-    // Simulate funding
     setTimeout(() => {
       updateStepStatus('wallet', 'complete');
       setCurrentStep(1);
       updateStepStatus('funding', 'loading');
     }, 1000);
 
-    // Simulate metadata upload
     setTimeout(() => {
       updateStepStatus('funding', 'complete');
       setCurrentStep(2);
       updateStepStatus('metadata', 'loading');
     }, 3500);
 
-    // Simulate token launch
     setTimeout(() => {
       updateStepStatus('metadata', 'complete');
       setCurrentStep(3);
       updateStepStatus('token', 'loading');
     }, 5000);
 
-    // Simulate saving
     setTimeout(() => {
       updateStepStatus('token', 'complete');
       setCurrentStep(4);
       updateStepStatus('saving', 'loading');
     }, 5500);
 
-    // Complete
     setTimeout(() => {
       updateStepStatus('saving', 'complete');
       setCurrentStep(5);
@@ -124,30 +118,6 @@ const PumpTokenCreator = () => {
       ...prev,
       [name]: value
     }));
-  };
-
-  // Special handler for the directFeesTo field to auto-add @
-  const handleDirectFeesToChange = (e) => {
-    let value = e.target.value;
-    
-    // If user types something and it doesn't start with @, add it
-    if (value && !value.startsWith('@')) {
-      value = '@' + value;
-    }
-    
-    setFormData(prev => ({
-      ...prev,
-      directFeesTo: value
-    }));
-  };
-
-  // Function to ensure @ prefix when saving/submitting
-  const getDirectFeesToValue = () => {
-    const value = formData.directFeesTo.trim();
-    if (value && !value.startsWith('@')) {
-      return '@' + value;
-    }
-    return value;
   };
 
   const handleImageChange = (e) => {
@@ -164,25 +134,14 @@ const PumpTokenCreator = () => {
     }
   };
 
-  // Function to get rate limit display info
   const getRateLimitDisplayInfo = (rateLimitError) => {
-    if (rateLimitError.rateLimitType === 'feeAccount') {
-      return {
-        title: 'Fee Account Limited',
-        message: `${rateLimitError.feeAccount} has reached its daily limit (${rateLimitError.currentCount}/${rateLimitError.dailyLimit} tokens)`,
-        timeInfo: `Resets in ${rateLimitError.hoursUntilReset} hours`,
-        icon: <FaClock />,
-        bgColor: 'bg-orange-500'
-      };
-    } else {
-      return {
-        title: 'Rate Limited',
-        message: 'Too many requests from your IP',
-        timeInfo: `Wait ${rateLimitError.remainingMinutes} minutes`,
-        icon: <FaClock />,
-        bgColor: 'bg-red-500'
-      };
-    }
+    return {
+      title: 'Rate Limited',
+      message: 'Too many requests from your IP',
+      timeInfo: `Wait ${rateLimitError.remainingMinutes} minutes`,
+      icon: <FaClock />,
+      bgColor: 'bg-red-500'
+    };
   };
 
   const createPumpToken = async () => {
@@ -198,13 +157,11 @@ const PumpTokenCreator = () => {
     setCurrentStep(0);
     setStepStatuses({});
 
-    // Start progress simulation
     simulateProgress();
 
     try {
       console.log('Starting token creation via API...');
       
-      // Prepare form data for API
       const apiFormData = new FormData();
       apiFormData.append('name', formData.name);
       apiFormData.append('symbol', formData.symbol);
@@ -212,14 +169,12 @@ const PumpTokenCreator = () => {
       apiFormData.append('twitter', formData.twitter);
       apiFormData.append('telegram', formData.telegram);
       apiFormData.append('website', formData.website);
-      // Use the function to ensure @ prefix when submitting
-      apiFormData.append('directFeesTo', getDirectFeesToValue());
+      apiFormData.append('discord', formData.discord);
       
       if (formData.image) {
         apiFormData.append('image', formData.image);
       }
 
-      // Call API route
       const response = await fetch('/api/tokens/create', {
         method: 'POST',
         body: apiFormData
@@ -227,19 +182,12 @@ const PumpTokenCreator = () => {
 
       const result = await response.json();
 
-      // Handle rate limiting specifically
       if (response.status === 429) {
         setRateLimitError({
           message: result.error,
           remainingMinutes: result.remainingMinutes,
           lastCreation: result.lastCreation,
-          rateLimitType: result.rateLimitType || 'ip',
-          // Fee account specific fields
-          feeAccount: result.feeAccount,
-          currentCount: result.currentCount,
-          dailyLimit: result.dailyLimit,
-          hoursUntilReset: result.hoursUntilReset,
-          resetTime: result.resetTime
+          rateLimitType: result.rateLimitType || 'ip'
         });
         setLoading(false);
         setCurrentStep(0);
@@ -257,7 +205,6 @@ const PumpTokenCreator = () => {
       setWalletData(result.wallet);
       setSuccess(true);
       
-      // Clear form
       setFormData({
         name: '',
         symbol: '',
@@ -266,7 +213,7 @@ const PumpTokenCreator = () => {
         twitter: '',
         telegram: '',
         website: '',
-        directFeesTo: ''
+        discord: ''
       });
       setPreviewImage('');
 
@@ -279,11 +226,10 @@ const PumpTokenCreator = () => {
     } finally {
       setTimeout(() => {
         setLoading(false);
-      }, 6000); // Keep loading state until animation completes
+      }, 6000);
     }
   };
 
-  // Test wallet API response
   const testWalletAPI = async () => {
     try {
       console.log('Testing PumpPortal wallet API...');
@@ -303,7 +249,6 @@ const PumpTokenCreator = () => {
     }
   };
 
-  // Test function for localhost development
   const testToast = async () => {
     const testTokenData = {
       signature: 'test123signature',
@@ -330,26 +275,12 @@ const PumpTokenCreator = () => {
     }, 6000);
   };
 
-  // Test rate limit error (IP-based)
   const testRateLimit = () => {
     setRateLimitError({
       message: "Rate limit exceeded. You can create another token in 5 minutes.",
       remainingMinutes: 5,
       lastCreation: new Date().toISOString(),
       rateLimitType: 'ip'
-    });
-  };
-
-  // Test fee account rate limit error
-  const testFeeAccountRateLimit = () => {
-    setRateLimitError({
-      message: "Daily limit exceeded for @testaccount. This account has created 2/2 tokens today. Try again in 8 hours.",
-      rateLimitType: 'feeAccount',
-      feeAccount: '@testaccount',
-      currentCount: 2,
-      dailyLimit: 2,
-      hoursUntilReset: 8,
-      resetTime: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString()
     });
   };
 
@@ -377,7 +308,7 @@ const PumpTokenCreator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#15161B] p-4 flex items-center">
+    <div className="min-h-screen bg-[#000] p-4 flex items-center">
       <div className='absolute bottom-3 -translate-x-1/2 left-1/2 text-gray-500 hidden md:flex justify-center items-center'>
         powered by <a href="https://pump.fun/board"><img src="pill.png" className='w-12' alt="Pump.fun" /></a>
       </div>
@@ -401,11 +332,6 @@ const PumpTokenCreator = () => {
                 <span className="text-xs opacity-90">
                   {getRateLimitDisplayInfo(rateLimitError).timeInfo}
                 </span>
-                {rateLimitError.rateLimitType === 'feeAccount' && (
-                  <div className="text-xs opacity-75 mt-1">
-                    Account: {rateLimitError.feeAccount} ({rateLimitError.currentCount}/{rateLimitError.dailyLimit} daily)
-                  </div>
-                )}
               </div>
               <button
                 onClick={() => setRateLimitError(null)}
@@ -493,7 +419,7 @@ const PumpTokenCreator = () => {
           <IoMdArrowRoundBack size={30} />
         </Link>
 
-        <div className="bg-[#15161B] md:border md:border-[#2F3036] rounded-2xl p-8 mt-[7.5%]">
+        <div className="bg-[#111] md:border md:border-[#2F3036] rounded-2xl p-8 mt-[7.5%]">
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-start">
               <span className="text-red-600 font-semibold mr-2">!</span>
@@ -550,7 +476,7 @@ const PumpTokenCreator = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    placeholder="Printed"
+                    placeholder="Meme"
                     required
                     className="w-full bg-[#24252B] border border-[#2F3036] rounded-lg px-4 py-3 text-gray-500 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   />
@@ -563,7 +489,7 @@ const PumpTokenCreator = () => {
                     name="symbol"
                     value={formData.symbol}
                     onChange={handleInputChange}
-                    placeholder="PRINTED"
+                    placeholder="MEME"
                     required
                     maxLength="10"
                     className="w-full bg-[#24252B] border border-[#2F3036] rounded-lg px-4 py-3 text-gray-500 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
@@ -578,29 +504,15 @@ const PumpTokenCreator = () => {
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
-                placeholder="Tell the world about this token..."
-                rows={1}
+                placeholder="The best token ever"
+                rows={2}
                 maxLength="500"
                 className="w-full bg-[#24252B] border border-[#2F3036] rounded-lg px-4 py-3 text-gray-500 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none"
               />
-              <p className="text-xs text-gray-500 mt-1 hidden">{formData.description.length}/500 characters</p>
+              <p className="text-xs text-gray-500 mt-1">{formData.description.length}/500 characters</p>
             </div>
 
-            <div>
-              <label className="block text-gray-400 font-semibold mb-2">
-                Send Fees*
-                <span className="text-xs text-gray-500 ml-2">(2 tokens max per day per account)</span>
-              </label>
-              <input
-                type="text"
-                name="directFeesTo"
-                value={formData.directFeesTo}
-                onChange={handleDirectFeesToChange}
-                placeholder="@printedwtf"
-                className="w-full bg-[#24252B] border border-[#2F3036] rounded-lg px-4 py-3 text-gray-500 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-
+            {/* Social Links Section */}
             <div>
               <button
                 type="button"
@@ -625,20 +537,33 @@ const PumpTokenCreator = () => {
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                     className="overflow-hidden"
                   >
-                    <div className="py-2 mt-2">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="py-2 mt-2 space-y-4">
+                      {/* Twitter and Telegram row */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                          <label className="block text-gray-400 font-medium mb-2">X/Twitter</label>
+                          <label className="block text-gray-400 font-medium mb-2">X / Twitter</label>
                           <input
                             type="url"
                             name="twitter"
                             value={formData.twitter}
                             onChange={handleInputChange}
-                            placeholder="https://x.com/..."
+                            placeholder="https://x.com/yourtoken"
                             className="w-full bg-[#24252B] border border-[#2F3036] rounded-lg px-3 py-2 text-gray-400 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                           />
                         </div>
                         
+                        <div>
+                          <label className="block text-gray-400 font-medium mb-2">Telegram</label>
+                          <input
+                            type="url"
+                            name="telegram"
+                            value={formData.telegram}
+                            onChange={handleInputChange}
+                            placeholder="https://t.me/yourtoken"
+                            className="w-full bg-[#24252B] border border-[#2F3036] rounded-lg px-3 py-2 text-gray-400 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                          />
+                        </div>
+
                         <div>
                           <label className="block text-gray-400 font-medium mb-2">Website</label>
                           <input
@@ -646,12 +571,12 @@ const PumpTokenCreator = () => {
                             name="website"
                             value={formData.website}
                             onChange={handleInputChange}
-                            placeholder="https://..."
+                            placeholder="https://yourtoken.com"
                             className="w-full bg-[#24252B] border border-[#2F3036] rounded-lg px-3 py-2 text-gray-400 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                           />
-                          <p className="text-xs text-gray-500 mt-1">saved for printed token page</p>
                         </div>
                       </div>
+
                     </div>
                   </motion.div>
                 )}
@@ -672,13 +597,10 @@ const PumpTokenCreator = () => {
               ) : rateLimitError ? (
                 <>
                   <FaClock className="mr-2" />
-                  {rateLimitError.rateLimitType === 'feeAccount' ? 
-                    `Account Limited (${rateLimitError.hoursUntilReset}h)` : 
-                    `Rate Limited (${rateLimitError.remainingMinutes}m)`
-                  }
+                  Rate Limited ({rateLimitError.remainingMinutes}m)
                 </>
               ) : (
-                'Create'
+                'Create Token'
               )}
             </button>
 
@@ -695,16 +617,9 @@ const PumpTokenCreator = () => {
                 <button
                   type="button"
                   onClick={testRateLimit}
-                  className="w-full bg-red-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-orange-700 transition-colors"
+                  className="w-full bg-red-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-700 transition-colors"
                 >
-                  Test IP Rate Limit Error (Dev Only)
-                </button>
-                <button
-                  type="button"
-                  onClick={testFeeAccountRateLimit}
-                  className="w-full bg-orange-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-orange-700 transition-colors"
-                >
-                  Test Fee Account Rate Limit (Dev Only)
+                  Test Rate Limit Error (Dev Only)
                 </button>
                 <button
                   type="button"

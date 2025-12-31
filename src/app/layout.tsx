@@ -1,13 +1,17 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Pixelify_Sans } from 'next/font/google'
 import './globals.css'
 import SessionProvider from './components/SessionProvider'
 
-const inter = Inter({ subsets: ['latin'] })
+const pixelify = Pixelify_Sans({
+  subsets: ['latin'],
+  weight: ['400'], // Pixelify only supports 400
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  title: 'Printed',
-  description: 'Launch for your favorite creators',
+  title: 'Meme Protocol',
+  description: 'All Roads Lead to Meme',
 }
 
 export default function RootLayout({
@@ -17,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={pixelify.className}>
         <SessionProvider>
           {children}
         </SessionProvider>

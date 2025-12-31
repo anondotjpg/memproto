@@ -234,7 +234,6 @@ export default function Token() {
             <div className='w-full border-b-2 py-1 border-gray-700'></div>
 
             <Link href={`https://pump.fun/coin/${token.mint_address}`} className="block">
-              {token.fee_account && (
                   <div className="bg-black rounded-lg p-2">
                       <div className="flex items-center gap-2">
                           <code className="flex-1 text-sm text-gray-300 px-3 py-2 rounded text-center">
@@ -245,11 +244,9 @@ export default function Token() {
                           </code>
                       </div>
                   </div>
-              )}
             </Link>
 
             <Link href="https://jup.ag/" className="block">
-              {token.fee_account && (
                   <div className="bg-black rounded-lg p-2">
                       <div className="flex items-center gap-2">
                           <code className="flex-1 text-sm text-gray-300 px-3 py-2 rounded text-center">
@@ -260,11 +257,9 @@ export default function Token() {
                           </code>
                       </div>
                   </div>
-              )}
             </Link>
 
             <Link href={`https://axiom.trade/t/${token.mint_address}`} className="block">
-              {token.fee_account && (
                   <div className="bg-black rounded-lg p-2">
                       <div className="flex items-center gap-2">
                           <code className="flex-1 text-sm text-gray-300 px-3 py-2 rounded text-center">
@@ -275,7 +270,6 @@ export default function Token() {
                           </code>
                       </div>
                   </div>
-              )}
             </Link>
 
           </div>

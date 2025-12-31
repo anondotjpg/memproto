@@ -203,7 +203,7 @@ const TokensList = () => {
         <button
           onClick={fetchTokens}
           disabled={loading}
-          className="w-[10%] md:w-min bg-[#15161B] text-white px-1 py-3 rounded-lg font-medium flex items-center justify-center cursor-pointer"
+          className="w-[10%] md:w-min text-white px-1 py-3 rounded-lg font-medium flex items-center justify-center cursor-pointer"
         >
           <MdOutlineRefresh className={`text-xl ${loading ? 'animate-spin' : ''}`} />
         </button>

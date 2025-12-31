@@ -22,20 +22,28 @@ export default function FAQs() {
   const faqs = [
     {
       question: "How it works?",
-      answer: "Printed lets users launch coins for others through our platform. Users can put details and initiate a launch. On the backend we generate a fresh wallet, fund it, deploy the coin, and finally safely secure the wallet details for the designated party."
+      answer: "Meme Protocol allows users to launch tokens on pump.fun and guarentee all value remains within the Meme Ecosystem. This leads to healthier markets and tokens. 100% of creator fees get used to support the token and the overall Meme Ecosystem."
+    },
+    {
+      question: "What happens with fees?",
+      answer: "50% go to buying back the token and 50% go to buying $MEME which will then be strategically allocated to top performers. This creates a positive flywheel for the ecosystem."
+    },
+    {
+      question: "Do I need to pay for launch?",
+      answer: "No. As of current we will fund all platform launches. In the future there may be a small fee to combat spam/low quality launches."
     },
     {
       question: "Why we need this?",
-      answer: "Many pump subjects aren't the creators of their own token, and that's ok. BUT, something needs to change. We have tokens rewarding shady deployers, launchpad pvp, etc. Printed solves both of these things by bringing a standard to launching for others on pump.fun."
+      answer: "Most pump tokens get thousands of $$ extracted from their chart. With Meme Protocol 100% of value stays within the Meme Ecosystem strengthening all participants. It's simple really."
     },
     {
       question: "Who are we?",
-      answer: "We are a small group of chad devs and traders who are sick of the vamps and mass extraction. We set out to build a quality product the trenches genuinely need."
+      answer: "We are a small group of chad devs and traders who are sick of the mass extraction. We set out to build a quality product the trenches genuinely need."
     }
   ];
 
   return (
-    <div className="min-h-screen bg-[#15161B] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[#000] flex items-center justify-center p-6">
       <Link
         href="/"
         className="absolute top-[3%] left-[3%] px-4 py-2 text-gray-500"
@@ -53,7 +61,7 @@ export default function FAQs() {
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-[#1E1F26] rounded-xl overflow-hidden"
+              className="bg-[#111] rounded-xl overflow-hidden"
             >
               <button
                 onClick={() => toggleItem(index)}
