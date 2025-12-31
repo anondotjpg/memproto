@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import TokensList from './components/TokensList'
+import RecentBuys from './components/SBuys'
 import Copy from './components/copy.js'
 import Link from 'next/link'
 import Marquee from 'react-fast-marquee'
@@ -180,9 +181,15 @@ export default function Home() {
               </div>
             </div>
           </div>
+
           {/* Tokens List Section */}
           <div className='w-full'>
             <TokensList />
+          </div>
+
+          {/* Recent Buys Section - Under TokensList */}
+          <div className='w-screen mt-8'>
+            <RecentBuys />
           </div>
         </div>
       </div>
