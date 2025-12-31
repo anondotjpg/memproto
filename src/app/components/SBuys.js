@@ -54,8 +54,8 @@ const RecentBuys = () => {
             <Image
                 src="/print.png"
                 alt="Print"
-                width={16}
-                height={16}
+                width={24}
+                height={24}
                 className="object-contain"
             />
         </div>
@@ -124,8 +124,49 @@ const RecentBuys = () => {
     );
   }
 
+  // Empty state
   if (buys.length === 0) {
-    return null;
+    return (
+      <div className="w-full max-w-2xl mx-auto px-4">
+        <div className="bg-[#0d0d0d] rounded-2xl border border-[#1c1c1e] overflow-hidden">
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 py-3 border-b border-[#1c1c1e]">
+            <div className="flex items-center gap-2.5">
+              <div className="w-2 h-2 bg-[#48484a] rounded-full"></div>
+              <span className="text-[13px] font-semibold text-[#f5f5f7]">Recent Activity</span>
+            </div>
+          </div>
+
+          {/* Empty State Content */}
+          <div className="py-12 px-6 flex flex-col items-center justify-center">
+            {/* Icon */}
+            <div className="w-14 h-14 rounded-full bg-[#1c1c1e] flex items-center justify-center mb-4">
+              <svg 
+                className="w-7 h-7 text-[#48484a]" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth="1.5" 
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" 
+                />
+              </svg>
+            </div>
+
+            {/* Text */}
+            <h3 className="text-[15px] font-semibold text-[#f5f5f7] mb-1">
+              No Activity Yet
+            </h3>
+            <p className="text-[13px] text-[#86868b] text-center max-w-[240px]">
+              Transactions will appear here as they happen
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
