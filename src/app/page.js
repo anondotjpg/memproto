@@ -2,7 +2,6 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import XVerification from './components/XVerification'
 import TokensList from './components/TokensList'
 import Copy from './components/copy.js'
 import Link from 'next/link'

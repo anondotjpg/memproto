@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Pixelify_Sans } from 'next/font/google'
 import './globals.css'
-import SessionProvider from './components/SessionProvider'
 
 const pixelify = Pixelify_Sans({
   subsets: ['latin'],
@@ -22,9 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={pixelify.className}>
-        <SessionProvider>
-          {children}
-        </SessionProvider>
+        {children}
       </body>
     </html>
   )
