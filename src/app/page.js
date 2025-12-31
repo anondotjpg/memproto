@@ -134,7 +134,7 @@ export default function Home() {
         <div className='absolute top-5 right-[9%]'>
           <div className='flex justify-center items-center gap-2'>
             <Link
-              href="https://x.com"
+              href="https://x.com/AllRoadstoMeme"
               className="py-2 text-white mb-[9px] rounded-lg text-base font-medium"
             >
               𝕏
