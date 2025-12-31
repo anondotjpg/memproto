@@ -299,61 +299,94 @@ async function processWallet(wallet, token) {
       return results;
     }
 
-    // Split 50/50
-    const halfBalanceSol = (availableBalance / 2) / LAMPORTS_PER_SOL;
-    console.log(`Available for buys: ${(availableBalance / LAMPORTS_PER_SOL).toFixed(6)} SOL (${halfBalanceSol.toFixed(6)} SOL each)`);
-
-    // Step 6: Buy target token (50%)
-    if (TARGET_TOKEN_CA) {
-      const targetBuyResult = await executeBuy(wallet.api_key, TARGET_TOKEN_CA, halfBalanceSol);
+    // Check if target token and self token are the same
+    const isSameToken = TARGET_TOKEN_CA && token?.mint_address && 
+                        TARGET_TOKEN_CA.toLowerCase() === token.mint_address.toLowerCase();
+    
+    const availableSol = availableBalance / LAMPORTS_PER_SOL;
+    
+    if (isSameToken) {
+      // Same token - do one buy with full amount
+      console.log(`Target and self token are the same (${token.name}) - doing single buy with ${availableSol.toFixed(6)} SOL`);
+      
+      const buyResult = await executeBuy(wallet.api_key, TARGET_TOKEN_CA, availableSol);
       results.targetTokenBuy = {
         tokenMint: TARGET_TOKEN_CA,
-        amountSol: halfBalanceSol,
-        ...targetBuyResult
-      };
-
-      await supabase.from('wallet_activities').insert([{
-        wallet_id: wallet.id,
-        activity_type: targetBuyResult.success ? 'buy_target_token' : 'buy_target_token_failed',
-        activity_description: targetBuyResult.success 
-          ? `Bought target token with ${halfBalanceSol.toFixed(6)} SOL`
-          : `Failed to buy target token: ${targetBuyResult.error}`,
-        transaction_signature: targetBuyResult.signature || null,
-        amount_sol: halfBalanceSol,
-        created_at: new Date().toISOString()
-      }]);
-
-      if (targetBuyResult.success && targetBuyResult.signature) {
-        // Wait for confirmation before next buy
-        await waitForConfirmation(targetBuyResult.signature, 10000);
-      }
-      
-      // Delay between transactions
-      await new Promise(resolve => setTimeout(resolve, TRANSACTION_DELAY));
-    } else {
-      results.errors.push('TARGET_TOKEN_CA not configured');
-    }
-
-    // Step 7: Buy the token's own coin (50%)
-    if (token?.mint_address) {
-      const selfBuyResult = await executeBuy(wallet.api_key, token.mint_address, halfBalanceSol);
-      results.selfTokenBuy = {
-        tokenMint: token.mint_address,
         tokenName: token.name,
-        amountSol: halfBalanceSol,
-        ...selfBuyResult
+        amountSol: availableSol,
+        combinedBuy: true,
+        ...buyResult
       };
+      results.selfTokenBuy = results.targetTokenBuy; // Reference same result
 
       await supabase.from('wallet_activities').insert([{
         wallet_id: wallet.id,
-        activity_type: selfBuyResult.success ? 'buy_self_token' : 'buy_self_token_failed',
-        activity_description: selfBuyResult.success 
-          ? `Bought own token (${token.name}) with ${halfBalanceSol.toFixed(6)} SOL`
-          : `Failed to buy own token: ${selfBuyResult.error}`,
-        transaction_signature: selfBuyResult.signature || null,
-        amount_sol: halfBalanceSol,
+        activity_type: buyResult.success ? 'buy_combined_token' : 'buy_combined_token_failed',
+        activity_description: buyResult.success 
+          ? `Bought ${token.name} (target = self) with ${availableSol.toFixed(6)} SOL`
+          : `Failed to buy ${token.name}: ${buyResult.error}`,
+        transaction_signature: buyResult.signature || null,
+        amount_sol: availableSol,
         created_at: new Date().toISOString()
       }]);
+      
+    } else {
+      // Different tokens - split 50/50
+      const halfBalanceSol = availableSol / 2;
+      console.log(`Available for buys: ${availableSol.toFixed(6)} SOL (${halfBalanceSol.toFixed(6)} SOL each)`);
+
+      // Step 6: Buy target token (50%)
+      if (TARGET_TOKEN_CA) {
+        const targetBuyResult = await executeBuy(wallet.api_key, TARGET_TOKEN_CA, halfBalanceSol);
+        results.targetTokenBuy = {
+          tokenMint: TARGET_TOKEN_CA,
+          amountSol: halfBalanceSol,
+          ...targetBuyResult
+        };
+
+        await supabase.from('wallet_activities').insert([{
+          wallet_id: wallet.id,
+          activity_type: targetBuyResult.success ? 'buy_target_token' : 'buy_target_token_failed',
+          activity_description: targetBuyResult.success 
+            ? `Bought target token with ${halfBalanceSol.toFixed(6)} SOL`
+            : `Failed to buy target token: ${targetBuyResult.error}`,
+          transaction_signature: targetBuyResult.signature || null,
+          amount_sol: halfBalanceSol,
+          created_at: new Date().toISOString()
+        }]);
+
+        if (targetBuyResult.success && targetBuyResult.signature) {
+          // Wait for confirmation before next buy
+          await waitForConfirmation(targetBuyResult.signature, 10000);
+        }
+        
+        // Delay between transactions
+        await new Promise(resolve => setTimeout(resolve, TRANSACTION_DELAY));
+      } else {
+        results.errors.push('TARGET_TOKEN_CA not configured');
+      }
+
+      // Step 7: Buy the token's own coin (50%)
+      if (token?.mint_address) {
+        const selfBuyResult = await executeBuy(wallet.api_key, token.mint_address, halfBalanceSol);
+        results.selfTokenBuy = {
+          tokenMint: token.mint_address,
+          tokenName: token.name,
+          amountSol: halfBalanceSol,
+          ...selfBuyResult
+        };
+
+        await supabase.from('wallet_activities').insert([{
+          wallet_id: wallet.id,
+          activity_type: selfBuyResult.success ? 'buy_self_token' : 'buy_self_token_failed',
+          activity_description: selfBuyResult.success 
+            ? `Bought own token (${token.name}) with ${halfBalanceSol.toFixed(6)} SOL`
+            : `Failed to buy own token: ${selfBuyResult.error}`,
+          transaction_signature: selfBuyResult.signature || null,
+          amount_sol: halfBalanceSol,
+          created_at: new Date().toISOString()
+        }]);
+      }
     }
 
     // Get final balance
